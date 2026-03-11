@@ -112,7 +112,7 @@
 <script>
     $(function () {
 
-        var chat = $.connection.chatHub;
+        var chat = $.connection.concentradorDeTareas;
 
         chat.client.nuevaTarea = function (tarea) {
             var store = App.StoreTareas;
