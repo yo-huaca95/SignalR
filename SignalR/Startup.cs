@@ -1,6 +1,6 @@
 ﻿using Microsoft.Owin;
 using Owin;
-using SignalR.Hubs;
+using SignalR.TiempoReal.Trabajos;
 
 [assembly: OwinStartup(typeof(SignalR.Startup))]
 namespace SignalR
