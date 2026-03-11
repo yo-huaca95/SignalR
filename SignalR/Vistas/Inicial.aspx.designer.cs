@@ -24,12 +24,12 @@ namespace SignalR.Vistas
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// Control ProgressBar1.
+        /// Control StoreTareas.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::Ext.Net.ProgressBar ProgressBar1;
+        protected global::Ext.Net.Store StoreTareas;
     }
 }

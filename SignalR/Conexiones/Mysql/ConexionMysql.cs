@@ -2,6 +2,7 @@
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
@@ -22,6 +23,36 @@ namespace SignalR.Conexiones.Mysql
         //        cmd.ExecuteNonQuery();
         //    }
         //}
+        public DataTable ObtenerTareas()
+        {
+            DataTable dt = new DataTable();
+
+            using (MySqlConnection cn = new MySqlConnection(connStr))
+            {
+                string sql = @"SELECT 
+                        id,
+                        tipo,
+                        estado,
+                         CAST(progreso / 100 AS DECIMAL(5,1)) as progreso,
+                        fecha_creacion,
+                        fecha_inicio,
+                        fecha_fin
+                       FROM jobs
+                       ORDER BY fecha_creacion DESC";
+
+                using (MySqlCommand cmd = new MySqlCommand(sql, cn))
+                {
+                    cn.Open();
+
+                    using (MySqlDataAdapter da = new MySqlDataAdapter(cmd))
+                    {
+                        da.Fill(dt);
+                    }
+                }
+            }
+
+            return dt;
+        }
 
         public int InsertarJob()
         {
@@ -54,7 +85,7 @@ namespace SignalR.Conexiones.Mysql
                 cn.Open();
 
                 var cmd = new MySqlCommand(
-               "UPDATE jobs SET estado='EnProceso', fecha_inicio=NOW() WHERE id=@id",
+               "UPDATE jobs SET estado='Generando', fecha_inicio=NOW() WHERE id=@id",
                cn);
                 cmd.Parameters.AddWithValue("@id", jobId);
 
@@ -88,10 +119,10 @@ namespace SignalR.Conexiones.Mysql
 
                 var cmd = new MySqlCommand(
                     @"UPDATE jobs 
-          SET estado='Finalizado',
-              progreso=100,
-              fecha_fin=NOW()
-          WHERE id=@id",
+                      SET estado='Terminado',
+                      progreso=100,
+                      fecha_fin=NOW()
+                      WHERE id=@id",
                     cn);
 
                 cmd.Parameters.AddWithValue("@id", jobId);

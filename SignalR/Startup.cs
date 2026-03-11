@@ -1,5 +1,6 @@
 ﻿using Microsoft.Owin;
 using Owin;
+using SignalR.Hubs;
 
 [assembly: OwinStartup(typeof(SignalR.Startup))]
 namespace SignalR
@@ -9,6 +10,7 @@ namespace SignalR
         public void Configuration(IAppBuilder app)
         {
             app.MapSignalR();
+            GestorDeTrabajadores.Iniciar();
         }
     }
 }

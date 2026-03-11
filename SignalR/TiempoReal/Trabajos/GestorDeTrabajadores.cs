@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.Threading.Tasks;
 
-namespace SignalR.Hubs
+namespace SignalR.TiempoReal.Trabajos
 {
-    public class WorkerManager
+    public class GestorDeTrabajadores
     {
         private static int MAX_WORKERS = 5;
 
@@ -22,9 +18,10 @@ namespace SignalR.Hubs
         {
             while (true)
             {
-                if (JobQueue.TryDequeue(out int jobId))
+                if (ColaDeTrabajos.TryDequeue(out int tareaId))
                 {
-                    await EjecucionTareas.Procesar(jobId);
+                    await ProcesadorDeTareas.Procesar(tareaId);
+
                 }
                 else
                 {
