@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using SignalR.Conexiones.Mysql;
+using System;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace SignalR.TiempoReal.Trabajos
 {
@@ -20,12 +23,27 @@ namespace SignalR.TiempoReal.Trabajos
             {
                 if (ColaDeTrabajos.TryDequeue(out int tareaId))
                 {
+                    ConexionMysql.MarcarEnCola(tareaId);
+
                     await ProcesadorDeTareas.Procesar(tareaId);
 
                 }
                 else
                 {
-                    await Task.Delay(2000);
+                    // 2. Si la cola está vacía, buscar trabajos pendientes en BD
+                    var tareasPendientes = ConexionMysql.ObtenerTareasPendientes();
+
+                    foreach (DataRow fila in tareasPendientes.Rows)
+                    {
+                        int idTarea = Convert.ToInt32(fila["id"]);
+
+                        ConexionMysql.MarcarEnCola(idTarea);
+
+                        ColaDeTrabajos.Enqueue(idTarea);
+                    }
+
+                    // Esperar un poco antes de revisar de nuevo
+                    await Task.Delay(4000);
                 }
             }
         }
