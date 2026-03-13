@@ -212,7 +212,6 @@ namespace SignalR.Conexiones.Mysql
             return id;
         }
 
-
         public static void MarcarEnCola(int idTarea)
         {
             using (var cn = new MySqlConnection(connStr))
@@ -230,7 +229,6 @@ namespace SignalR.Conexiones.Mysql
                 }
             }
         }
-
 
         public static void MarcarEnProceso(int jobId)
         {
@@ -285,6 +283,30 @@ namespace SignalR.Conexiones.Mysql
                 cmd.ExecuteNonQuery();
             }
         }
+
+
+        public static void MarcarEnError(int idTarea, string mensaje)
+        {
+            using (var cn = new MySqlConnection(connStr))
+            {
+                string sql = @"
+                        UPDATE jobs
+                        SET estado = 'Error',
+                            mensaje_error = @mensaje,
+                            fecha_fin = NOW()
+                        WHERE id = @id";
+
+                using (var cmd = new MySqlCommand(sql, cn))
+                {
+                    cmd.Parameters.AddWithValue("@id", idTarea);
+                    cmd.Parameters.AddWithValue("@mensaje", mensaje);
+
+                    cn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
 
     }
 

@@ -23,8 +23,6 @@ namespace SignalR.TiempoReal.Trabajos
             {
                 if (ColaDeTrabajos.TryDequeue(out int tareaId))
                 {
-                    ConexionMysql.MarcarEnCola(tareaId);
-
                     await ProcesadorDeTareas.Procesar(tareaId);
 
                 }
@@ -37,9 +35,12 @@ namespace SignalR.TiempoReal.Trabajos
                     {
                         int idTarea = Convert.ToInt32(fila["id"]);
 
-                        ConexionMysql.MarcarEnCola(idTarea);
-
-                        ColaDeTrabajos.Enqueue(idTarea);
+                        // 2.1 Verificar si ya está en la cola (en memoria)
+                        if (!ColaDeTrabajos.EstaEnCola(idTarea))
+                        {
+                            ConexionMysql.MarcarEnCola(idTarea);
+                            ColaDeTrabajos.Enqueue(idTarea);
+                        }
                     }
 
                     // Esperar un poco antes de revisar de nuevo

@@ -29,26 +29,28 @@ namespace SignalR.TiempoReal.Trabajos
             ConexionMysql.MarcarEnProceso(tareaId);
             contexto.Clients.Groups(new[] { usuario, "Administrador" }).actualizarEstado(tareaId, "Generando");
 
-            // 3. Ejecutar el procedimiento almacenado que procesa todos los empleados
-            //ConexionMysql.EjecutarProcedimientoLiquidacionBase(idTarea);
+                // 3. Ejecutar el procedimiento almacenado que procesa todos los empleados
+                //ConexionMysql.EjecutarProcedimientoLiquidacionBase(idTarea);
 
 
 
-            // 4. Consultar avance y notificar solo a ese usuario
-            /*   bool finalizado = false;
-               while (!finalizado)
-               {
-                   var detalle = ConexionMysql.ObtenerDetalleProgreso(idTarea);
+                // . Consultar avance y notificar solo a ese usuario
+                /*   bool finalizado = false;
+                   while (!finalizado)
+                   {
+                       var detalle = ConexionMysql.ObtenerDetalleProgreso(idTarea);
 
-                   contexto.Clients.Group(usuario).actualizarDetalle(idTarea, detalle);
+                       contexto.Clients.Group(usuario).actualizarDetalle(idTarea, detalle);
 
-                   finalizado = ConexionMysql.TareaFinalizada(idTarea);
+                       finalizado = ConexionMysql.TareaFinalizada(idTarea);
 
-                   await Task.Delay(1000);
-               }*/ //Aplicar a ala logica
+                       await Task.Delay(1000);
+                   }*/ //Aplicar a ala logica
+              
+                
+                // 4. Simulación de progreso (solo para pruebas)
 
-
-            for (int i = 0; i <= 100; i += 10)
+                for (int i = 0; i <= 100; i += 10)
             {
                 await Task.Delay(1000);
 

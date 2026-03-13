@@ -13,7 +13,7 @@
                     return value;
                 case 'Pendiente':
                     return '<img src="' + Ext.net.ResourceMgr.getIconUrl("Hourglass") + '" width=16 height=16>';
-                case 'Generando'||'':
+                case 'Generando':
                     return '<div class="loading" width=16 height=16 />';
                 case 'Error':
                     return '<img src="' + Ext.net.ResourceMgr.getIconUrl("Decline") + '" width=16 height=16>';
