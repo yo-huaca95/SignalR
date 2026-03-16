@@ -7,13 +7,13 @@ namespace SignalR.TiempoReal.Trabajos
     {
         public static ConcurrentQueue<int> Cola = new ConcurrentQueue<int>();
         private static readonly HashSet<int> TareasEnCola = new HashSet<int>();
-        private static readonly object Locker = new object();
+        private static readonly object Candado= new object();
 
 
-        public static void Enqueue(int tareaId)
+        public static void Encolar(int tareaId)
         {
 
-            lock (Locker)
+            lock (Candado)
             {
                 if (!TareasEnCola.Contains(tareaId))
                 {
@@ -23,12 +23,12 @@ namespace SignalR.TiempoReal.Trabajos
             }
         }
 
-        public static bool TryDequeue(out int tareaId)
+        public static bool IntentarDesencolar(out int tareaId)
         {
 
             if (Cola.TryDequeue(out tareaId))
             {
-                lock (Locker)
+                lock (Candado)
                 {
                     TareasEnCola.Remove(tareaId);
                 }
@@ -40,10 +40,11 @@ namespace SignalR.TiempoReal.Trabajos
 
         public static bool EstaEnCola(int tareaId)
         {
-            lock (Locker)
+            lock (Candado)
             {
                 return TareasEnCola.Contains(tareaId);
             }
+            
         }
 
     }
