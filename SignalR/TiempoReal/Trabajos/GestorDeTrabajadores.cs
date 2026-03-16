@@ -21,7 +21,7 @@ namespace SignalR.TiempoReal.Trabajos
         {
             while (true)
             {
-                if (ColaDeTrabajos.TryDequeue(out int tareaId))
+                if (ColaDeTrabajos.IntentarDesencolar(out int tareaId))
                 {
                     await ProcesadorDeTareas.Procesar(tareaId);
 
@@ -39,7 +39,7 @@ namespace SignalR.TiempoReal.Trabajos
                         if (!ColaDeTrabajos.EstaEnCola(idTarea))
                         {
                             ConexionMysql.MarcarEnCola(idTarea);
-                            ColaDeTrabajos.Enqueue(idTarea);
+                            ColaDeTrabajos.Encolar(idTarea);
                         }
                     }
 

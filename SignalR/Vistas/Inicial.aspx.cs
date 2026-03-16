@@ -39,7 +39,7 @@ namespace SignalR.Vistas
                 usuario= UsuarioActual
             });
 
-            ColaDeTrabajos.Enqueue(id);
+            ColaDeTrabajos.Encolar(id);
 
         }
 
