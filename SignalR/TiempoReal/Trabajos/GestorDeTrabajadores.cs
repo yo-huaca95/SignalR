@@ -21,31 +21,63 @@ namespace SignalR.TiempoReal.Trabajos
         {
             while (true)
             {
-                if (ColaDeTrabajos.IntentarDesencolar(out int tareaId))
-                {
-                    await ProcesadorDeTareas.Procesar(tareaId);
 
-                }
-                else
+                try
                 {
-                    // 2. Si la cola está vacía, buscar trabajos pendientes en BD
-                    var tareasPendientes = ConexionMysql.ObtenerTareasPendientes();
 
-                    foreach (DataRow fila in tareasPendientes.Rows)
+                    if (ColaDeTrabajos.IntentarDesencolar(out int tareaId))
                     {
-                        int idTarea = Convert.ToInt32(fila["id"]);
 
-                        // 2.1 Verificar si ya está en la cola (en memoria)
-                        if (!ColaDeTrabajos.EstaEnCola(idTarea))
+                        try
                         {
-                            ConexionMysql.MarcarEnCola(idTarea);
-                            ColaDeTrabajos.Encolar(idTarea);
+
+                            await ProcesadorDeTareas.Procesar(tareaId);
+
                         }
+                        catch (Exception ex)
+                        {
+                            // La tarea falla, pero el worker sigue funcionando para otras tareas
+                            ConexionMysql.MarcarEnError(tareaId, ex.Message);
+
+                            // (opcional) log
+                            Console.WriteLine($"Error en tarea {tareaId}: {ex.Message}");
+                        }
+
+                    }
+                    else
+                    {
+                        // 2. Si la cola está vacía, buscar trabajos pendientes en BD
+                        var tareasPendientes = ConexionMysql.ObtenerTareasPendientes();
+
+                        foreach (DataRow fila in tareasPendientes.Rows)
+                        {
+                            int idTarea = Convert.ToInt32(fila["id"]);
+
+                            // 2.1 Verificar si ya está en la cola (en memoria)
+                            if (!ColaDeTrabajos.EstaEnCola(idTarea))
+                            {
+                                ConexionMysql.MarcarEnCola(idTarea);
+                                ColaDeTrabajos.Encolar(idTarea);
+                            }
+                        }
+
+                        // Esperar un poco antes de revisar de nuevo
+                        await Task.Delay(4000);
                     }
 
-                    // Esperar un poco antes de revisar de nuevo
-                    await Task.Delay(4000);
+
+
                 }
+                catch (Exception ex)
+                {
+                    // Error inesperado del worker (DB caída, etc.)
+                    Console.WriteLine("Error grave en WorkerLoop: " + ex.Message);
+
+                    // Pequeña pausa para no entrar en loop infinito de errores
+                    await Task.Delay(5000);
+                }
+
+
             }
         }
     }
